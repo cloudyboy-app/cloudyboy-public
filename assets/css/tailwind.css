@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#__nuxt {
+  @apply m-0 p-0 w-screen h-screen;
+}
+
+.btn-primary {
+  @apply text-slate-900;
+}
+
+/* ul.menu :where(li) > :where(*:not(ul)) {
+  @apply gap-2;
+} */
