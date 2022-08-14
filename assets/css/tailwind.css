@@ -5,13 +5,34 @@
 html,
 body,
 #__nuxt {
-  @apply m-0 p-0 w-screen h-screen;
+  @apply w-screen h-screen;
+}
+
+body {
+  @apply m-0 p-0 bg-base-300;
+}
+
+.menu-horizontal :where(li) * {
+  @apply rounded-lg;
 }
 
 .btn-primary {
   @apply text-slate-900;
 }
 
-/* ul.menu :where(li) > :where(*:not(ul)) {
-  @apply gap-2;
-} */
+.label {
+  @apply justify-center;
+}
+
+.label-text,
+sup {
+  @apply text-base -z-50;
+}
+
+input[type='file'] {
+  @apply w-full pb-12 pl-0 text-sm input input-bordered;
+}
+
+input[type='file']::file-selector-button {
+  @apply btn mr-3;
+}
