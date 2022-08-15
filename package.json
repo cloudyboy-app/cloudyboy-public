@@ -20,6 +20,7 @@
     "eslint": "^8.21.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.3.0",
+    "notiwind": "^1.2.6",
     "nuxt": "3.0.0-rc.8",
     "prettier": "^2.7.1",
     "vee-validate": "^4.6.5",
