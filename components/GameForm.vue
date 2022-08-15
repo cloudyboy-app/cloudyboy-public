@@ -5,8 +5,12 @@ import { Form, Field, FieldArray } from 'vee-validate';
 import { Game } from '~~/models/game';
 
 const emit = defineEmits<{ (event: 'submit', data: Partial<Game>): void }>();
-const props = defineProps<{ initialValues: Partial<Game>; loading: boolean }>();
-const { initialValues, loading } = toRefs(props);
+const props = defineProps<{
+  initialValues: Partial<Game>;
+  loading: boolean;
+  editMode?: boolean;
+}>();
+const { initialValues, loading, editMode } = toRefs(props);
 
 const EIGHT_MEGABYTES = 8388608;
 
@@ -14,7 +18,7 @@ const validateMaxFileSize = (file: File | null) =>
   file?.size <= EIGHT_MEGABYTES;
 
 const validateImageMimeType = (file: File | null) =>
-  file?.type.startsWith('image/');
+  file?.type?.startsWith('image/');
 
 const validationSchema = object().shape(
   {
@@ -23,21 +27,38 @@ const validationSchema = object().shape(
       .notRequired()
       .max(5000, 'Description cannot be longer than 5000 characters'),
     file: mixed()
-      .required('This field is required')
-      .test(
-        'fileExtension',
-        "This file doesn't have a .gb or .gbc extension",
-        (file: File) =>
-          file?.name.endsWith('.gb') || file?.name.endsWith('.gbc')
-      ),
+      .notRequired()
+      .when('file', {
+        is: (_value) => !editMode.value,
+        then: (schema) =>
+          schema.test(
+            'fileExtension',
+            "This file doesn't have a .gb or .gbc extension",
+            (file: File) =>
+              file?.name?.endsWith('.gb') || file?.name?.endsWith('.gbc')
+          )
+      }),
     cover: mixed()
-      .required()
-      .test('mimeType', 'This file is not an image', validateImageMimeType)
-      .test('maxSize', "This file's size exceeds 8 MB", validateMaxFileSize),
+      .notRequired()
+      .when('cover', {
+        is: (_value) => !editMode.value,
+        then: (schema) =>
+          schema
+            .test(
+              'mimeType',
+              'This file is not an image',
+              validateImageMimeType
+            )
+            .test(
+              'maxSize',
+              "This file's size exceeds 8 MB",
+              validateMaxFileSize
+            )
+      }),
     screenshots: mixed()
       .notRequired()
       .when('screenshots', {
-        is: (files: FileList) => files?.length > 0,
+        is: (files: FileList) => !editMode.value && files?.length > 0,
         then: (schema) =>
           schema
             .test(
@@ -59,7 +80,7 @@ const validationSchema = object().shape(
     tagToAdd: string()
       .notRequired()
       .when('tagToAdd', {
-        is: (value: string) => value?.length > 0,
+        is: (tag: string) => tag?.length > 0,
         then: (schema) =>
           schema
             .test(
@@ -71,9 +92,9 @@ const validationSchema = object().shape(
               'unique',
               'This tag has already been added',
               function (tag: string) {
-                // This SO answer came in handy, and still could in the future:
+                // Because I couldn't get yup's ref to work for some reason,
+                // I opted to use unspecified options property:
                 // https://stackoverflow.com/a/65146593
-
                 return !(
                   this.options as unknown as { parent: { tags: string[] } }
                 ).parent.tags.includes(tag);
@@ -87,11 +108,13 @@ const validationSchema = object().shape(
     tags: array()
       .notRequired()
       .when('tags', {
-        is: (value: string) => value?.length > 0,
+        is: (tags: string) => tags?.length > 0,
         then: (schema) => schema.max(10, 'You cannot specify more than 10 tags')
       })
   },
   [
+    ['file', 'file'],
+    ['cover', 'cover'],
     ['screenshots', 'screenshots'],
     ['tagToAdd', 'tagToAdd'],
     ['tags', 'tags']
@@ -106,7 +129,7 @@ const emitSubmitEvent = (data: Partial<Game>) => {
 
 <template>
   <Form
-    v-slot="{ meta, errors }"
+    v-slot="{ meta, errors, resetForm }"
     :validation-schema="validationSchema"
     :initial-values="initialValues"
     @submit="emitSubmitEvent"
@@ -129,48 +152,47 @@ const emitSubmitEvent = (data: Partial<Game>) => {
         <span class="label-text text-error">{{ errors.title }}</span>
       </label>
     </div>
-    <div class="form-control my-6">
-      <label for="rom-file" class="label">
-        <span class="label-text -z-1">
-          ROM file
-          <sup class="text-red-500">*</sup>
-        </span>
-      </label>
-      <Field v-slot="{ handleChange, handleBlur }" name="file">
-        <input
-          id="rom-file"
-          type="file"
-          accept=".gb,.gbc"
-          :disabled="loading"
-          @change="handleChange"
-          @blur="handleBlur"
-        />
-      </Field>
-      <label v-if="errors.file" class="label">
-        <span class="label-text text-error">{{ errors.file }}</span>
-      </label>
-    </div>
-    <div class="form-control">
-      <label for="cover" class="label">
-        <span class="label-text">
-          Cover image
-          <sup class="text-red-500">*</sup>
-        </span>
-      </label>
-      <Field v-slot="{ handleChange, handleBlur }" name="cover">
-        <input
-          id="cover"
-          type="file"
-          accept="image/*"
-          :disabled="loading"
-          @change="handleChange"
-          @blur="handleBlur"
-        />
-      </Field>
-      <label v-if="errors.cover" class="label">
-        <span class="label-text text-error">{{ errors.cover }}</span>
-      </label>
-    </div>
+    <template v-if="!editMode">
+      <div class="form-control my-6">
+        <label for="rom-file" class="label">
+          <span class="label-text -z-1">
+            ROM file
+            <sup class="text-red-500">*</sup>
+          </span>
+        </label>
+        <Field v-slot="{ handleChange, handleBlur }" name="file">
+          <input
+            id="rom-file"
+            type="file"
+            accept=".gb,.gbc"
+            :disabled="loading"
+            @change="handleChange"
+            @blur="handleBlur"
+          />
+        </Field>
+        <label v-if="errors.file" class="label">
+          <span class="label-text text-error">{{ errors.file }}</span>
+        </label>
+      </div>
+      <div class="form-control">
+        <label for="cover" class="label">
+          <span class="label-text">Cover image</span>
+        </label>
+        <Field v-slot="{ handleChange, handleBlur }" name="cover">
+          <input
+            id="cover"
+            type="file"
+            accept="image/*"
+            :disabled="loading"
+            @change="handleChange"
+            @blur="handleBlur"
+          />
+        </Field>
+        <label v-if="errors.cover" class="label">
+          <span class="label-text text-error">{{ errors.cover }}</span>
+        </label>
+      </div>
+    </template>
     <div class="form-control my-6">
       <label for="description" class="label">
         <span class="label-text">Description (max. 5000 characters)</span>
@@ -186,7 +208,7 @@ const emitSubmitEvent = (data: Partial<Game>) => {
         <span class="label-text text-error">{{ errors.description }}</span>
       </label>
     </div>
-    <div class="form-control my-6">
+    <div v-if="!editMode" class="form-control my-6">
       <label for="screenshots" class="label">
         <span class="label-text">Screenshots (max. 10)</span>
       </label>
@@ -260,10 +282,18 @@ const emitSubmitEvent = (data: Partial<Game>) => {
     <button
       class="btn btn-primary"
       type="submit"
-      :disabled="loading || !meta.valid"
+      :disabled="loading || !meta.dirty || !meta.valid"
     >
       <i v-if="loading" class="fa-solid fa-spinner fa-spin mr-2"></i>
       Submit
+    </button>
+    <button
+      class="btn btn-outline btn-warning ml-4"
+      type="button"
+      :disabled="loading || !meta.dirty"
+      @click="resetForm()"
+    >
+      Reset form
     </button>
   </Form>
 </template>

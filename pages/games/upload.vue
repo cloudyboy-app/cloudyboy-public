@@ -50,7 +50,7 @@ const onSubmit = async (game: Partial<Game>) => {
     );
 
     await supabase.from<Game>('games').insert([game]).throwOnError();
-    await router.push('/');
+    await router.push(`/games/${game.id}`);
   } catch (error) {
     // TODO: Replace alert with a toast service
     alert('Something went wrong!');
