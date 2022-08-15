@@ -3,7 +3,7 @@
     <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex flex-col">
       <div
-        class="navbar bg-base-100 fixed top-0 w-full z-5 border-b-[1px] border-gray-600"
+        class="navbar bg-base-100 fixed top-0 w-full z-50 border-b-[1px] border-gray-600"
       >
         <div class="flex-1">
           <NuxtLink to="/" class="btn btn-ghost normal-case text-xl">
