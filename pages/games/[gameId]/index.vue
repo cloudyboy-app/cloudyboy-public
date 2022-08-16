@@ -45,7 +45,18 @@ onMounted(
       </template>
       <div v-else class="w-full flex flex-col items-center">
         <div class="w-96 h-80 bg-primary"></div>
-        <h1 class="text-4xl font-bold my-6">{{ game.title }}</h1>
+        <h1 class="text-4xl font-bold mt-6">{{ game.title }}</h1>
+        <div class="w-full my-6">
+          <NuxtLink :to="`/games/${game.id}/edit`" class="btn btn-warning mr-4">
+            <i class="fa-solid fa-pen mr-3"></i>
+            Edit
+          </NuxtLink>
+          <a href="#removal-confirm-modal" class="btn btn-error">
+            <i class="fa-solid fa-trash-can mr-3"></i>
+            Remove
+          </a>
+          <GameRemovalConfirmModal :game="game" />
+        </div>
         <div v-if="game.tags.length > 0" class="w-full">
           <span
             v-for="tag of game.tags"
