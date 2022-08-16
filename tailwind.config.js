@@ -6,6 +6,7 @@ const customColors = {
 };
 
 module.exports = {
+  plugins: [require('daisyui')],
   daisyui: {
     themes: [
       {
@@ -22,5 +23,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [require('daisyui')]
+  safelist: ['alert-info', 'alert-success']
 };
