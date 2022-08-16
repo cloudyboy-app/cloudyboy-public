@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { object, string, mixed, array } from 'yup';
 import { Form, Field, FieldArray } from 'vee-validate';
@@ -44,6 +45,7 @@ const validationSchema = object().shape(
         is: (_value) => !editMode.value,
         then: (schema) =>
           schema
+            .required('This field is required')
             .test(
               'mimeType',
               'This file is not an image',
@@ -176,7 +178,10 @@ const emitSubmitEvent = (data: Partial<Game>) => {
       </div>
       <div class="form-control">
         <label for="cover" class="label">
-          <span class="label-text">Cover image</span>
+          <span class="label-text">
+            Cover image
+            <sup class="text-red-500">*</sup>
+          </span>
         </label>
         <Field v-slot="{ handleChange, handleBlur }" name="cover">
           <input
@@ -282,9 +287,9 @@ const emitSubmitEvent = (data: Partial<Game>) => {
     <button
       class="btn btn-primary"
       type="submit"
+      :class="{ loading }"
       :disabled="loading || !meta.dirty || !meta.valid"
     >
-      <i v-if="loading" class="fa-solid fa-spinner fa-spin mr-2"></i>
       Submit
     </button>
     <button

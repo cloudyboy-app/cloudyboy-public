@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { notify } from 'notiwind';
 import { Game } from '~~/models/game';
 
 const route = useRoute();
@@ -9,7 +10,7 @@ const gameId = route.params.gameId as string;
 
 const {
   pending,
-  error: gameFetchError,
+  error,
   data: game,
   refresh
 } = await useAsyncData(`game-${gameId}`, async () => {
@@ -28,12 +29,10 @@ const {
 });
 
 const isUpdatingGame = ref(false);
-const errorOccurred = ref<boolean | string | Error>(gameFetchError.value);
 
 const onSubmit = async (data: Partial<Game>) => {
   try {
     isUpdatingGame.value = true;
-    errorOccurred.value = false;
 
     await supabase
       .from<Game>('games')
@@ -42,25 +41,39 @@ const onSubmit = async (data: Partial<Game>) => {
       .throwOnError();
 
     await refresh();
+
+    notify(
+      {
+        group: 'notifications',
+        type: 'success',
+        text: 'Game updated successfully!'
+      },
+      4000
+    );
     await router.push(`/games/${gameId}`);
   } catch (error) {
-    alert('Something went wrong!');
+    notify(
+      {
+        group: 'notifications',
+        type: 'error',
+        text: 'Failed to update the game!'
+      },
+      4000
+    );
   } finally {
     isUpdatingGame.value = false;
   }
 };
 
 onMounted(
-  () =>
-    (route.meta.layout =
-      gameFetchError.value || !game.value ? 'hero' : 'default')
+  () => (route.meta.layout = error.value || !game.value ? 'hero' : 'default')
 );
 </script>
 
 <template>
   <div class="lg:w-2/5 w-10/12">
     <i v-if="pending" class="fa-solid fa-spinner fa-spin text-8xl"></i>
-    <div v-else-if="errorOccurred" class="alert alert-error shadow-lg flex-col">
+    <div v-else-if="error" class="alert alert-error shadow-lg flex-col">
       <div class="text-base">Something went wrong while fetching the game</div>
       <button class="btn btn-sm" @click="refresh()">Try again</button>
     </div>

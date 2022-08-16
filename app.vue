@@ -22,6 +22,7 @@
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
+      <ToastGroup />
     </div>
     <div class="drawer-side">
       <label for="drawer-toggle" class="drawer-overlay"></label>

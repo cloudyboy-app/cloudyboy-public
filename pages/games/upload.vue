@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { notify } from 'notiwind';
 import { Game } from '~~/models/game';
 
 const router = useRouter();
@@ -13,9 +14,7 @@ const initialValues = reactive<Partial<Game>>({
   tags: [],
   tagToAdd: ''
 });
-
 const isUploadingGame = ref(false);
-const errorOccurred = ref(false);
 
 const uploadFile = async (directory: string, file: File | string) => {
   const fileName = [...crypto.getRandomValues(new Uint32Array(5)).values()]
@@ -39,7 +38,6 @@ const uploadFile = async (directory: string, file: File | string) => {
 const onSubmit = async (game: Partial<Game>) => {
   try {
     isUploadingGame.value = true;
-    errorOccurred.value = false;
 
     game.file = await uploadFile('games', game.file);
     game.cover = await uploadFile('images/covers', game.cover);
@@ -49,15 +47,31 @@ const onSubmit = async (game: Partial<Game>) => {
       )
     );
 
-    await supabase.from<Game>('games').insert([game]).throwOnError();
-    await router.push(`/games/${game.id}`);
-  } catch (error) {
-    // TODO: Replace alert with a toast service
-    alert('Something went wrong!');
+    const { data: gameEntries } = await supabase
+      .from<Game>('games')
+      .insert([game])
+      .throwOnError();
 
-    // eslint-disable-next-line no-console
-    console.error(error);
-    errorOccurred.value = true;
+    const [gameEntry] = gameEntries;
+
+    notify(
+      {
+        group: 'notifications',
+        type: 'success',
+        text: 'Game uploaded successfully!'
+      },
+      4000
+    );
+    await router.push(`/games/${gameEntry.id}`);
+  } catch (error) {
+    notify(
+      {
+        group: 'notifications',
+        type: 'error',
+        text: 'Failed to upload the game!'
+      },
+      4000
+    );
   } finally {
     isUploadingGame.value = false;
   }
