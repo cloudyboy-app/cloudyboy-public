@@ -1,3 +1,7 @@
+<script setup lang="ts">
+useHead({ title: 'CloudyBoy' });
+</script>
+
 <template>
   <div class="drawer">
     <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
