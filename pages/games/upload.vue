@@ -2,6 +2,10 @@
 import { notify } from 'notiwind';
 import { Game } from '~~/models/game';
 
+definePageMeta({
+  middleware: 'auth'
+});
+
 const router = useRouter();
 const supabase = useSupabaseClient();
 
