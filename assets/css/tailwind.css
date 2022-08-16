@@ -26,7 +26,7 @@ body {
 
 .label-text,
 sup {
-  @apply text-base -z-50;
+  @apply text-base;
 }
 
 input[type='file'] {
