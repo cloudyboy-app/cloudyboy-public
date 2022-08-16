@@ -1,10 +1,35 @@
 <script setup lang="ts">
-const isDark = useDark({
-  selector: 'html',
-  attribute: 'data-theme',
-  valueDark: 'dark',
-  valueLight: 'light'
-});
+import { notify } from 'notiwind';
+
+const router = useRouter();
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const isDark = useIsDark();
+
+const signOut = async () => {
+  try {
+    await supabase.auth.signOut();
+
+    notify(
+      {
+        group: 'notifications',
+        type: 'success',
+        text: "You've been signed out successfully!"
+      },
+      4000
+    );
+    await router.push('/sign-in');
+  } catch (error) {
+    notify(
+      {
+        group: 'notifications',
+        type: 'error',
+        text: 'Failed to sign you out!'
+      },
+      4000
+    );
+  }
+};
 </script>
 
 <template>
@@ -21,16 +46,24 @@ const isDark = useDark({
         Collections
       </NuxtLink>
     </li>
-    <li>
-      <NuxtLink to="/games/upload">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
-        Upload a game
-      </NuxtLink>
-    </li>
-    <li>
-      <NuxtLink to="https://github.com/cloudyboy-app/cloudyboy.app">
-        <i class="fa-solid fa-code"></i>
-        Source code
+    <template v-if="user">
+      <li>
+        <NuxtLink to="/games/upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Upload a game
+        </NuxtLink>
+      </li>
+      <li>
+        <a @click="signOut()">
+          <i class="fa-solid fa-sign-out"></i>
+          Sign out
+        </a>
+      </li>
+    </template>
+    <li v-else>
+      <NuxtLink to="/sign-in">
+        <i class="fa-solid fa-sign-in"></i>
+        Sign in
       </NuxtLink>
     </li>
     <li>
@@ -44,12 +77,12 @@ const isDark = useDark({
         <label class="swap justify-start">
           <input v-model="isDark" type="checkbox" />
           <div class="swap-on flex content-center gap-3">
-            <i class="fa-solid fa-moon self-center"></i>
-            Dark theme
+            <i class="fa-solid fa-sun self-center"></i>
+            Use light theme
           </div>
           <div class="swap-off flex content-center gap-3">
-            <i class="fa-solid fa-sun self-center"></i>
-            Light theme
+            <i class="fa-solid fa-moon self-center"></i>
+            Use dark theme
           </div>
         </label>
       </ClientOnly>
