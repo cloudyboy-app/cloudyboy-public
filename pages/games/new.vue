@@ -86,7 +86,7 @@ const onSubmit = async (game: Partial<Game>) => {
 
 <template>
   <div class="lg:w-2/5 w-10/12">
-    <h1 class="text-4xl font-bold mb-6">Upload a game</h1>
+    <h1 class="text-4xl font-bold mb-6">Upload new game</h1>
     <GameForm
       :initial-values="initialValues"
       :loading="isUploadingGame"
