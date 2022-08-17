@@ -53,8 +53,7 @@ const removeGame = async () => {
     <div class="modal-box">
       <h3 class="font-bold text-lg">Are you sure?</h3>
       <p class="py-4">
-        This action is irreversible! It will result in both the game entry and
-        all the files associated with it being deleted. Please type in
+        This action is irreversible! Please type in
         <strong>{{ props.game.title }}</strong> to confirm removal:
       </p>
       <input
