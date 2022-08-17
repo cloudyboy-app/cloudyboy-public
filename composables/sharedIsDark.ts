@@ -5,4 +5,4 @@ const isDark = useDark({
   valueLight: 'light'
 });
 
-export const useIsDark = () => isDark;
+export const useSharedIsDark = () => isDark;

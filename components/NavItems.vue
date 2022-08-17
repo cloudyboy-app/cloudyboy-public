@@ -4,7 +4,7 @@ import { notify } from 'notiwind';
 const router = useRouter();
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
-const isDark = useIsDark();
+const isDark = useSharedIsDark();
 
 const signOut = async () => {
   try {
@@ -37,36 +37,24 @@ const signOut = async () => {
     <li>
       <NuxtLink to="/games">
         <i class="fa-solid fa-gamepad"></i>
-        Games
-      </NuxtLink>
-    </li>
-    <li>
-      <NuxtLink to="/collections">
-        <i class="fa-solid fa-rectangle-list"></i>
-        Collections
+        Browse games
       </NuxtLink>
     </li>
     <template v-if="user">
       <li>
-        <NuxtLink to="/games/upload">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          Upload a game
+        <NuxtLink :to="`/library/${user.id}`">
+          <i class="fa-solid fa-folder-open"></i>
+          Your library
         </NuxtLink>
       </li>
-      <li>
-        <a @click="signOut()">
-          <i class="fa-solid fa-sign-out"></i>
-          Sign out
-        </a>
-      </li>
     </template>
-    <li v-else>
-      <NuxtLink to="/sign-in">
-        <i class="fa-solid fa-sign-in"></i>
-        Sign in
+    <li>
+      <NuxtLink to="/about">
+        <i class="fa-solid fa-circle-info"></i>
+        About this project
       </NuxtLink>
     </li>
-    <li>
+    <li class="lg:ml-auto ml-0">
       <ClientOnly>
         <template #fallback>
           <a>
@@ -86,6 +74,18 @@ const signOut = async () => {
           </div>
         </label>
       </ClientOnly>
+    </li>
+    <li v-if="user">
+      <a @click="signOut()">
+        <i class="fa-solid fa-sign-out"></i>
+        Sign out
+      </a>
+    </li>
+    <li v-else>
+      <NuxtLink to="/sign-in">
+        <i class="fa-solid fa-sign-in"></i>
+        Sign in
+      </NuxtLink>
     </li>
   </ul>
 </template>
