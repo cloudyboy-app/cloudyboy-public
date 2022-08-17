@@ -36,3 +36,15 @@ input[type='file'] {
 input[type='file']::file-selector-button {
   @apply btn mr-3;
 }
+
+a.tab {
+  @apply transition duration-300;
+}
+
+a.tab i {
+  @apply md:block hidden;
+}
+
+div.tabs .tab-active {
+  @apply text-slate-900 hover:bg-slate-900 hover:text-primary;
+}
