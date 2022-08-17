@@ -64,7 +64,12 @@ const removeGame = async () => {
         :disabled="isRemovingGame"
       />
       <div class="modal-action justify-center gap-1">
-        <a href="#" class="btn" :class="{ 'btn-disabled': isRemovingGame }">
+        <a
+          href="#"
+          class="btn"
+          :class="{ 'btn-disabled': isRemovingGame }"
+          @click="userPhrase = ''"
+        >
           Nevermind
         </a>
         <button
