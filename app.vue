@@ -9,7 +9,7 @@ useHead({ title: 'CloudyBoy' });
       <div
         class="navbar bg-base-100 fixed top-0 w-full z-50 border-b-[1px] border-gray-600"
       >
-        <div class="flex-1">
+        <div class="lg:flex-none flex-1">
           <NuxtLink to="/" class="btn btn-ghost normal-case text-xl">
             CloudyBoy
           </NuxtLink>
@@ -19,8 +19,8 @@ useHead({ title: 'CloudyBoy' });
             <i class="fa-solid fa-bars text-lg"></i>
           </label>
         </div>
-        <div class="flex-none hidden lg:block">
-          <NavItems class="menu menu-horizontal" />
+        <div class="flex-1 hidden lg:block">
+          <NavItems class="w-full menu menu-horizontal" />
         </div>
       </div>
       <NuxtLayout>
