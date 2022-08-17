@@ -42,16 +42,22 @@ const signOut = async () => {
     </li>
     <template v-if="user">
       <li>
-        <NuxtLink :to="`/library/${user.id}`">
-          <i class="fa-solid fa-folder-open"></i>
-          Your library
+        <NuxtLink to="/games/new">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          New game
+        </NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/collections/create">
+          <i class="fa-solid fa-folder-plus"></i>
+          New collection
         </NuxtLink>
       </li>
     </template>
     <li>
       <NuxtLink to="/about">
         <i class="fa-solid fa-circle-info"></i>
-        About this project
+        About
       </NuxtLink>
     </li>
     <li class="lg:ml-auto ml-0">
@@ -75,12 +81,20 @@ const signOut = async () => {
         </label>
       </ClientOnly>
     </li>
-    <li v-if="user">
-      <a @click="signOut()">
-        <i class="fa-solid fa-sign-out"></i>
-        Sign out
-      </a>
-    </li>
+    <template v-if="user">
+      <li>
+        <NuxtLink :to="`/users/${user.id}/games`">
+          <i class="fa-solid fa-user"></i>
+          Your profile
+        </NuxtLink>
+      </li>
+      <li>
+        <a @click="signOut()">
+          <i class="fa-solid fa-sign-out"></i>
+          Sign out
+        </a>
+      </li>
+    </template>
     <li v-else>
       <NuxtLink to="/sign-in">
         <i class="fa-solid fa-sign-in"></i>
