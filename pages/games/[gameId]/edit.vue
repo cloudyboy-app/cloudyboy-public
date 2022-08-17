@@ -76,7 +76,7 @@ onMounted(
 
 <template>
   <div class="lg:w-2/5 w-10/12">
-    <i v-if="pending" class="fa-solid fa-spinner fa-spin text-8xl"></i>
+    <PageLoadingSpinner v-if="pending" />
     <div v-else-if="error" class="alert alert-error shadow-lg flex-col">
       <div class="text-base">Something went wrong while fetching the game</div>
       <button class="btn btn-sm" @click="refresh()">Try again</button>

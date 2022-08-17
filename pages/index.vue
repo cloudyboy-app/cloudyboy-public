@@ -17,7 +17,7 @@ watch(user, async (newUserData) => {
 
 <template>
   <div class="w-11/12">
-    <i v-if="redirectCookie" class="fa-solid fa-spinner fa-spin text-8xl"></i>
+    <PageLoadingSpinner v-if="redirectCookie" />
     <template v-else>
       <h1 class="md:text-5xl text-4xl font-bold">Welcome to CloudyBoy!</h1>
       <p class="md:text-xl text-lg my-6">

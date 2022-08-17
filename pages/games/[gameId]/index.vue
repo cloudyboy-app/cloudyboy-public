@@ -19,6 +19,7 @@ const {
       `
       id,
       title,
+      cover,
       description,
       tags,
       screenshots,
@@ -41,7 +42,7 @@ onMounted(
 
 <template>
   <div class="md:w-1/2 w-5/6">
-    <i v-if="pending" class="fa-solid fa-spinner fa-spin text-8xl"></i>
+    <PageLoadingSpinner v-if="pending" />
     <ErrorAlert v-else-if="error" @retry="refresh()">
       Something went wrong while fetching the game
     </ErrorAlert>
@@ -82,7 +83,12 @@ onMounted(
         -->
         <div class="w-full">
           <h2 class="text-3xl font-bold my-6">About this game</h2>
-          <p class="text-left leading-loose">{{ game.description }}</p>
+          <p
+            class="text-left leading-loose"
+            :class="{ 'text-center italic': game.description.length === 0 }"
+          >
+            {{ game.description || 'No description was provided' }}
+          </p>
         </div>
       </div>
     </template>
