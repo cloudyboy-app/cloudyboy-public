@@ -3,6 +3,7 @@ import { Game } from '~~/models/game';
 
 const route = useRoute();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
 const gameId = route.params.gameId as string;
 
@@ -14,7 +15,16 @@ const {
 } = await useAsyncData(`game-${gameId}`, async () => {
   const { error, data } = await supabase
     .from<Game>('games')
-    .select()
+    .select(
+      `
+      id,
+      title,
+      description,
+      tags,
+      screenshots,
+      uploader:profiles(*)
+    `
+    )
     .eq('id', gameId)
     .limit(1)
     .single();
@@ -24,8 +34,6 @@ const {
   return data;
 });
 
-const getSlideId = (index: number) => `slide${index}`;
-
 onMounted(
   () => (route.meta.layout = error.value || !game.value ? 'hero' : 'default')
 );
@@ -34,10 +42,9 @@ onMounted(
 <template>
   <div class="md:w-1/2 w-5/6">
     <i v-if="pending" class="fa-solid fa-spinner fa-spin text-8xl"></i>
-    <div v-else-if="error" class="alert alert-error shadow-lg flex-col">
-      <div class="text-base">Something went wrong while fetching the game</div>
-      <button class="btn btn-sm" @click="refresh()">Try again</button>
-    </div>
+    <ErrorAlert v-else-if="error" @retry="refresh()">
+      Something went wrong while fetching the game
+    </ErrorAlert>
     <template v-else>
       <template v-if="!game">
         <h1 class="text-4xl font-bold mb-4">Oh no!</h1>
@@ -46,7 +53,7 @@ onMounted(
       <div v-else class="w-full flex flex-col items-center">
         <div class="w-96 h-80 bg-primary"></div>
         <h1 class="text-4xl font-bold mt-6">{{ game.title }}</h1>
-        <div class="w-full my-6">
+        <div v-if="user.id === game.uploader.id" class="w-full my-6">
           <NuxtLink :to="`/games/${game.id}/edit`" class="btn btn-warning mr-4">
             <i class="fa-solid fa-pen mr-3"></i>
             Edit
@@ -66,44 +73,13 @@ onMounted(
             {{ tag }}
           </span>
         </div>
-        <div v-if="game.screenshots.length > 0" class="w-full">
-          <h2 class="text-3xl font-bold my-6">Gallery</h2>
-          <div class="carousel w-full">
-            <div
-              v-for="(screenshot, index) of game.screenshots"
-              :id="getSlideId(index)"
-              :key="getSlideId(index)"
-              class="carousel-item relative w-full"
-            >
-              <img :src="(screenshot as string)" class="w-full" />
-              <div
-                class="absolute flex transform -translate-y-1/2 left-5 right-5 top-1/2"
-                :class="[
-                  index === 0
-                    ? 'justify-end'
-                    : index === game.screenshots.length - 1
-                    ? 'justify-start'
-                    : 'justify-between'
-                ]"
-              >
-                <a
-                  v-if="index !== 0"
-                  :href="`#${getSlideId(index - 1)}`"
-                  class="btn btn-circle"
-                >
-                  <i class="fa-solid fa-chevron-left"></i>
-                </a>
-                <a
-                  v-if="index !== game.screenshots.length - 1"
-                  :href="`#${getSlideId(index + 1)}`"
-                  class="btn btn-circle"
-                >
-                  <i class="fa-solid fa-chevron-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!--
+          TODO: Replace DaisyUI carousel with a separate component
+          <GameScreenshotsGallery
+            v-if="game.screenshots.length > 0"
+            :screenshots="(game.screenshots as string[])"
+          />
+        -->
         <div class="w-full">
           <h2 class="text-3xl font-bold my-6">About this game</h2>
           <p class="text-left leading-loose">{{ game.description }}</p>
