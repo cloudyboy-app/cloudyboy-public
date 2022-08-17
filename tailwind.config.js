@@ -23,5 +23,5 @@ module.exports = {
       }
     ]
   },
-  safelist: ['alert-info', 'alert-success']
+  safelist: ['alert-info', 'alert-success', 'alert-warning', 'alert-error']
 };
