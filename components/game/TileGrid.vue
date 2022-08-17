@@ -24,7 +24,7 @@ const { games } = toRefs(props);
           <h2 class="card-title">{{ game.title }}</h2>
           <p class="truncate">
             Uploaded by
-            <strong>{{ game.uploader.raw_user_meta_data.user_name }}</strong>
+            <strong>{{ game.uploader.raw_user_meta_data.full_name }}</strong>
           </p>
         </div>
       </div>
