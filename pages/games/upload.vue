@@ -8,6 +8,7 @@ definePageMeta({
 
 const router = useRouter();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
 const initialValues = reactive<Partial<Game>>({
   title: '',
@@ -43,6 +44,7 @@ const onSubmit = async (game: Partial<Game>) => {
   try {
     isUploadingGame.value = true;
 
+    game.uploader_id = user.value.id;
     game.file = await uploadFile('games', game.file);
     game.cover = await uploadFile('images/covers', game.cover);
     game.screenshots = await Promise.all(
