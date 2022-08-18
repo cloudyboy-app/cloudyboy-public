@@ -7,6 +7,7 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
+    "@egjs/vue3-flicking": "^4.9.2",
     "@fortawesome/fontawesome-free": "^6.1.2",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
     "@nuxtjs/supabase": "^0.1.19",
