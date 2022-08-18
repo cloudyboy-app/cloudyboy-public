@@ -54,7 +54,17 @@ onMounted(
       <div v-else class="w-full flex flex-col items-center">
         <div class="w-96 h-80 bg-primary"></div>
         <h1 class="text-4xl font-bold mt-6">{{ game.title }}</h1>
-        <div v-if="user.id === game.uploader.id" class="w-full my-6">
+        <p class="text-xl mt-4">
+          Uploaded by
+          <NuxtLink :to="`/users/${game.uploader?.id}/games`">
+            <strong
+              class="text-primary hover:text-primary-focus transition duration-300"
+            >
+              {{ game.uploader?.raw_user_meta_data.full_name }}
+            </strong>
+          </NuxtLink>
+        </p>
+        <div v-if="user?.id === game.uploader?.id" class="w-full my-6">
           <NuxtLink :to="`/games/${game.id}/edit`" class="btn btn-warning mr-4">
             <i class="fa-solid fa-pen mr-3"></i>
             Edit
@@ -74,20 +84,13 @@ onMounted(
             {{ tag }}
           </span>
         </div>
-        <!--
-          TODO: Replace DaisyUI carousel with a separate component
-          <GameScreenshotsGallery
-            v-if="game.screenshots.length > 0"
-            :screenshots="(game.screenshots as string[])"
-          />
-        -->
         <div class="w-full">
           <h2 class="text-3xl font-bold my-6">About this game</h2>
           <p
             class="text-left leading-loose"
             :class="{ 'text-center italic': game.description.length === 0 }"
           >
-            {{ game.description || 'No description was provided' }}
+            {{ game.description || 'No description' }}
           </p>
         </div>
       </div>
