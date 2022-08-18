@@ -1,4 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- CAUTION: This component is an absolute unit. Tread carefully! -->
 <script setup lang="ts">
 import { object, string, mixed, array } from 'yup';
 import { Form, Field, FieldArray } from 'vee-validate';
@@ -255,7 +256,7 @@ const emitSubmitEvent = (data: Partial<Game>) => {
             <button
               type="button"
               class="btn"
-              :disabled="loading || !(value as string).length || !tagToAddMeta.valid"
+              :disabled="loading || !tagToAddMeta.valid || (value as string)?.length === 0"
               @click="push(field.value), resetField({ value: '' })"
             >
               Add tag
