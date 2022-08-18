@@ -4,7 +4,7 @@ const emit = defineEmits<{ (event: 'retry'): void }>();
 
 <template>
   <div class="alert alert-error shadow-lg flex-col">
-    <div class="text-base">
+    <div class="text-lg">
       <slot />
     </div>
     <button class="btn btn-sm" @click="emit('retry')">Try again</button>
