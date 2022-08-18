@@ -51,7 +51,7 @@ onMounted(() =>
         class="w-full lg:mb-8 mb-5 flex lg:flex-row flex-col lg:gap-5 md:gap-4 gap-3 justify-center items-center"
       >
         <div class="avatar">
-          <div class="lg:w-32 w-28 rounded-xl">
+          <div class="lg:w-28 w-24 rounded-xl">
             <img
               :src="(libraryOwner.raw_user_meta_data.avatar_url as string)"
               :alt="`${libraryOwner.raw_user_meta_data.full_name}'s avatar'`"
