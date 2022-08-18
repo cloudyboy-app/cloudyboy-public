@@ -20,18 +20,32 @@ const {
 } = await useAsyncData(`game-${gameId}`, async () => {
   const { error, data } = await supabase
     .from<Game>('games')
-    .select()
+    .select(
+      `
+      id,
+      title,
+      cover,
+      description,
+      tags,
+      screenshots,
+      uploader:profiles(*)
+    `
+    )
     .eq('id', gameId)
     .limit(1)
     .single();
 
   if (error) throw error;
 
-  data.tagToAdd = '';
-
   return data;
 });
 
+const initialValues = reactive<Partial<Game>>({
+  title: game.value?.title,
+  description: game.value?.description,
+  tags: game.value?.tags,
+  tagToAdd: ''
+});
 const isUpdatingGame = ref(false);
 
 const onSubmit = async (data: Partial<Game>) => {
@@ -91,7 +105,7 @@ onMounted(
           Edit <em>{{ game.title }}</em>
         </h1>
         <GameForm
-          :initial-values="game"
+          :initial-values="initialValues"
           :loading="isUpdatingGame"
           edit-mode
           @submit="onSubmit"
