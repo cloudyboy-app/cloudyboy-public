@@ -48,7 +48,7 @@ const signOut = async () => {
         </NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/collections/create">
+        <NuxtLink to="/collections/new">
           <i class="fa-solid fa-folder-plus"></i>
           New collection
         </NuxtLink>

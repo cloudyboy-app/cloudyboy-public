@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { notify } from 'notiwind';
 import { Game } from '~~/models/game';
 
 const route = useRoute();
+const router = useRouter();
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
@@ -23,7 +25,7 @@ const {
       description,
       tags,
       screenshots,
-      uploader:profiles(*)
+      uploader:profiles!uploader_id(*)
     `
     )
     .eq('id', gameId)
@@ -34,6 +36,54 @@ const {
 
   return data;
 });
+
+const isRemovingGame = ref(false);
+const removeGame = async () => {
+  try {
+    const gameFilesStoragePaths = [
+      game.value.file,
+      game.value.cover,
+      ...game.value.screenshots
+    ]
+      .filter(Boolean)
+      .map((url: string) => url.split('files/')[1]);
+
+    await supabase.storage.from('files').remove(gameFilesStoragePaths);
+
+    await supabase
+      .from('games_favorited_by')
+      .delete()
+      .match({ game_id: game.value.id });
+
+    await supabase
+      .from('games_collections')
+      .delete()
+      .match({ game_id: game.value.id });
+
+    await supabase.from('games').delete().match({ id: game.value.id });
+
+    notify(
+      {
+        group: 'notifications',
+        type: 'success',
+        text: 'Game deleted successfully!'
+      },
+      4000
+    );
+    await router.push('/');
+  } catch (error) {
+    notify(
+      {
+        group: 'notifications',
+        type: 'error',
+        text: 'Failed to delete the game!'
+      },
+      4000
+    );
+  } finally {
+    isRemovingGame.value = false;
+  }
+};
 
 onMounted(
   () => (route.meta.layout = error.value || !game.value ? 'hero' : 'default')
@@ -69,11 +119,15 @@ onMounted(
             <i class="fa-solid fa-pen mr-3"></i>
             Edit
           </NuxtLink>
-          <a href="#removal-confirm-modal" class="btn btn-error">
+          <a href="#removal-confirmation-modal" class="btn btn-error">
             <i class="fa-solid fa-trash-can mr-3"></i>
             Remove
           </a>
-          <GameRemovalConfirmModal :game="game" />
+          <RemovalConfirmationModal
+            :confirmation-phrase="game.title"
+            :removal-in-progress="isRemovingGame"
+            @confirm="removeGame()"
+          />
         </div>
         <div v-if="game.tags.length > 0" class="w-full">
           <span
