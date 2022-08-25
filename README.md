@@ -1,3 +1,7 @@
+# DISCLAIMER
+
+This repository contains code of the now cancelled _public_ version of CloudyBoy that was supposed to be hosted on https://cloudyboy.app. This version of the app is no longer maintained, and has been released solely for archival purposes.
+
 # Nuxt 3 Minimal Starter
 
 Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
