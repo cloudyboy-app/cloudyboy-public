@@ -24,6 +24,7 @@ const {
       `
       id,
       title,
+      date_created,
       cover,
       description,
       tags,

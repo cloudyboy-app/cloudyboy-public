@@ -12,9 +12,7 @@ import { NotificationGroup, Notification } from 'notiwind';
           class="alert"
           :class="[`alert-${notification.type}`]"
         >
-          <div>
-            <span>{{ notification.text }}</span>
-          </div>
+          <div class="flex-1 justify-center">{{ notification.text }}</div>
         </div>
       </Notification>
     </div>

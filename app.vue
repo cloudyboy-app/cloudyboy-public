@@ -1,5 +1,13 @@
 <script setup lang="ts">
 useHead({ title: 'CloudyBoy' });
+
+const route = useRoute();
+const isLandscapeMobileScreen = useMediaQuery(
+  '(orientation: landscape) and (max-device-height: 576px)'
+);
+const shouldHideNavbar = computed(
+  () => route.name === 'games-gameId-play' && isLandscapeMobileScreen.value
+);
 </script>
 
 <template>
@@ -8,6 +16,7 @@ useHead({ title: 'CloudyBoy' });
     <div class="drawer-content flex flex-col">
       <div
         class="navbar bg-base-100 fixed top-0 w-full z-50 border-b-[1px] border-gray-600"
+        :class="{ hidden: shouldHideNavbar }"
       >
         <div class="lg:flex-none flex-1">
           <NuxtLink to="/" class="btn btn-ghost normal-case text-xl">
